@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: mysql-db
+provisioner: nas.csi.cds.net
+reclaimPolicy: Delete
+parameters:
+  server: 10.241.85.11
+  path: /nfsshare
+  vers: "4.1"
+  archiveOnDelete: "true"
+  options: noresvport

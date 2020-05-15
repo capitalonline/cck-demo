@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: registry-bj.capitalonline.net/cck-example/wordpress:hyperdb
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mysql-0.mysql
+        - name: REPLICA_DB_HOST
+          value: mysql-read
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-data

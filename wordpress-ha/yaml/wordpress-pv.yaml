@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wordpress-data
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: nas.csi.cds.net
+    volumeHandle: wordpress-data
+    volumeAttributes:
+      server: "10.241.85.11"
+      path: "/nfsshare/wordpress-data"
+      vers: "4.0"
