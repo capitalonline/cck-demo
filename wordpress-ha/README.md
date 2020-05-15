@@ -478,7 +478,7 @@ spec:
 `sudo echo "103.228.160.68 word.press" >> /etc/hosts`
 
 之后就可以正常访问高可用的WordPress集群了
-！[preview](./public/preview.png)
+![preview](./public/preview.png)
 
 
 ## 资源
