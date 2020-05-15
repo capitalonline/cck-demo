@@ -1,6 +1,6 @@
-#高可用WordPress集群Kubernetes配置实例 - CCK
+# 高可用WordPress集群Kubernetes配置实例 - CCK
 
-##背景
+## 背景
 - WordPress是一个以PHP和MySQL为平台的自由开源的博客软件和内容管理系统
 - 截止2019年4月，WordPress已被超过6000万个网站使用，前1000万流行网站中WordPress使用率高达33.6%
 
