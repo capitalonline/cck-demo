@@ -466,7 +466,7 @@ spec:
           serviceName: wordpress
           servicePort: 80
 ```
-！[ingress](./public/ingress.png)
+![ingress](./public/ingress.png)
 可以通过页面确认Ingress路由已经创建完成
 
 ### 十二. 完成
