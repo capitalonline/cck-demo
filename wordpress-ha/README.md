@@ -99,7 +99,7 @@ spec:
 ```
 
 我们可以在页面上查看相应的服务已创建:
-![mysqlservice](./public/mysqlsc.png)
+![mysqlservice](./public/mysqlservice.png)
 
 ### 五. 添加MySQL的配置文件
 这里我们配置了一个configmap的资源，用于存储MySQL的master和slave节点的配置，后面会在创建MySQL集群的时候引用
