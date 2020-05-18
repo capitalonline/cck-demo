@@ -13,21 +13,21 @@
 ### 高可用架构
 ![ha-architect](./public/ha-architect.png)
 
-在这个架构方案下，我们首先建立了一个mysql应用，为WordPress提供一个高可用的数据库。
-然后再建立一个WordPress应用，他们之间共享/var/www/html, 这个目录存储了WordPress的静态资源，以便当用户的图片等资源上传到服务器时，
+在这个架构方案下，我们首先建立了一个mysql集群，为WordPress提供一个高可用的数据库。
+然后再建立一个WordPress应用，它们之间共享`/var/www/html`, 这个目录存储了WordPress的静态资源，以便当用户的图片等资源上传到服务器时，
 可以被所有的WordPress实例所共享。 最后，我们在WordPress应用前，再加上负载均衡服务，这样就组成了一个高可用的集群方案
 
-###解决方案
+### 解决方案
 下图描述了高可用架构在K8S实际的部署模型
 ![k8s-architect](./public/k8s-architect.png)
-首先，我们需要创建一个MySQL的应用，由于数据库属于有状态服务，所以这里我们用StatefulSet去管理MySQL的实例.
-对于每个MySQL的pod，我们通过storageclass，在CDS提供的文件存储服务上，单独配置一个持久化存储。
+首先，我们需要创建一个MySQL的应用，由于数据库属于有状态服务，所以这里我们用Stateful Set去管理MySQL的实例.
+我们通过配置Storageclass，利用CDS提供的文件存储服务，为每一个MySQL的Pod单独配置一个持久化存储。
 在配置MySQL时，我们可以通过xtrabackup插件，实现数据库的主从配置。之后我们再为MySQL单独配置两个Service，分别提供读访问和写访问的连接。
 
 当有了MySQL之后，我们可以继续配置WordPress应用。由于WordPress是无状态服务，我们可以简单的部署为Deployment。 
 这里需要注意的是，当WordPress去连接MySQL应用时，我们通过`HyperDB`插件，分离出WordPress的读写操作，
-使得所有的读操作可以通过MySQL的只读Service连接到数据的所有节点上，而写操作只能发送到MySQL的master节点上。
-此外，我们还创建了一个共性存储空间，用于所有WordPress实例间共享静态资源。
+使得所有的读操作可以通过MySQL的只读Service连接到数据库的所有节点上，而写操作只能发送到MySQL的master节点上。
+此外，我们还创建了一个共享的持久化存储空间，用于所有WordPress实例间共享静态资源。
 
 当WordPress和MySQL部署完成后，我们只需再配置下出网的路由，即可完成整个高可用WordPress的部署
 
@@ -55,14 +55,14 @@ metadata:
   name: wordpress
 ```
 
-可以在任意资源创建页面上，通过右上的`导入yaml功能`来创建 来创建
+可以在任意资源创建页面上，通过右上的`导入yaml功能`方便的进行资源的创建和修改操作
 ![importyaml](./public/importyaml.png)
 
 ### 四. 配置MySQL服务
 创建两个MySQL的服务：`mysql`和`mysql-read`：
-- `mysql` 是一个无头服务，这样我们就可以用`mysql-0.mysql`作为名字来访问MySQL数据库中的master节点，以便执行写操作
+- `mysql` 是一个无头服务，这样我们就可以用`mysql-0.mysql`作为名字来访问MySQL数据库中的master节点，执行写操作
 
-- `mysql-read`是一个`ClusterIP`类型的服务，我们可以通过`mysql-read`名字来轮询访问所有MySQL的节点，以便执行读操作
+- `mysql-read`是一个`ClusterIP`类型的服务，我们可以通过`mysql-read`名字来轮询访问所有MySQL的节点，执行读操作
 
 这样，通过`mysql-0.mysql`和`mysql-read`两个服务名字，我们就可以把读写操作的访问地址区分开来
 ```yaml
@@ -100,6 +100,7 @@ spec:
 
 我们可以在页面上查看相应的服务已创建:
 ![mysqlservice](./public/mysqlsc.png)
+
 ### 五. 添加MySQL的配置文件
 这里我们配置了一个configmap的资源，用于存储MySQL的master和slave节点的配置，后面会在创建MySQL集群的时候引用
 ```yaml
@@ -151,6 +152,7 @@ parameters:
 此外，每个Pod中，还有两个主容器：
  - `mysql`: 每个MySQL实例的主容器，对外提供服务
  - `xtrabackup`: 一个sidecar容器，用于同步slave节点间的内容，保证数据一致性
+
 我们这里通过第六步设置的storageclass，为每个pod都分配了一个PV，用于持久存储MySQL的data。这样如果一个Pod失败被调度到其他地方，我们可以保证数据不会丢失
 
 ```yaml
@@ -332,7 +334,7 @@ spec:
 存储声明:
 ![mysqlpvc](./public/mysqlpvc.png)
 
-存储类:
+存储卷:
 ![mysqlpv](./public/mysqlpv.png)
 
 ### 八. 配置WordPress存储
