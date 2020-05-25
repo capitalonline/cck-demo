@@ -6,7 +6,6 @@ metadata:
   name: wordpress
   namespace: wordpress
 spec:
-  clusterIP: 10.96.30.168
   ports:
   - name: wordpress
     port: 80

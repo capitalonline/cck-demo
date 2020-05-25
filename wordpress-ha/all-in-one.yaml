@@ -60,7 +60,7 @@ metadata:
 provisioner: nas.csi.cds.net
 reclaimPolicy: Delete
 parameters:
-  server: 10.241.85.11
+  server: <nas server address> # replace with real server ip
   path: /nfsshare
   vers: "4.1"
   archiveOnDelete: "true"
@@ -251,7 +251,7 @@ spec:
     driver: nas.csi.cds.net
     volumeHandle: wordpress-data
     volumeAttributes:
-      server: "10.241.85.11"
+      server: <nas server address> # replace with real server ip
       path: "/nfsshare/wordpress-data"
       vers: "4.0"
 
@@ -319,7 +319,6 @@ metadata:
   name: wordpress
   namespace: wordpress
 spec:
-  clusterIP: 10.96.30.168
   ports:
   - name: wordpress
     port: 80
