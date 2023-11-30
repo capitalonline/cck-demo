@@ -488,5 +488,5 @@ spec:
 
 同时，`all-in-one.yaml` 包含了所有的资源，我们也可以一次性的执行这个文件，所有的资源会自动创建出来
 
-**注意**: `all-in-one.yaml`，`mysql-storageclass.yaml` 和 `wordpress-pv.yaml`中的NAS `server`的值，需要根据实际情况修改该
+**注意**: `all-in-one.yaml`，`mysql-storageclass.yaml` 和 `wordpress-pv.yaml`中的NAS `server`的值，需要根据实际情况修改
 
